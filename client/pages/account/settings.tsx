@@ -43,11 +43,12 @@ export default function Settings() {
 									</div>
 								</div>
 								<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-									<Button text={"Modify"} primary={true}/>
+									<Button text={"Modify"} primary={true} shouldGrow={true} />
 								</div>
 							</div>
 						</form>
 					</div>
+					<Button text={"Delete my Account"} primary={true}  shouldGrow={false} className="mt-5 md:mt-0" />
 				</div>
 			</div>
 		</>
