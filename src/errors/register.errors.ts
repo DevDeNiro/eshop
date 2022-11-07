@@ -1,8 +1,7 @@
+import {formattedErrorInterface} from "~~/interfaces/interfaces";
+
 export function format(value: any) {
-	let formattedError: {
-		fields: string[],
-		error: string
-	} = {
+	let formattedError: formattedErrorInterface = {
 		fields: [],
 		error: ""
 	}
