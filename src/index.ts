@@ -1,7 +1,8 @@
 import cors from "cors"
 import express from "express"
 import {config} from "dotenv"
-import connect from "~/db/connection";
+import connect from "~/db/connection"
+import authRoutes from "~/middlewares/routes/auth.routes"
 config()
 
 const uri: string = process.env.DB_URI!
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors())
 
+app.use("/auth", authRoutes)
 
 app.listen(port, () => {
 	console.log('Silence, ça tourne.')
