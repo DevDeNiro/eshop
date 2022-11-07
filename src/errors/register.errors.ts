@@ -1,22 +1,22 @@
 export function format(value: any) {
 	let formattedError: {
-		field: string[],
+		fields: string[],
 		error: string
 	} = {
-		field: [],
+		fields: [],
 		error: ""
 	}
 	switch (value.type) {
 		case "any.only":
 			if(value.path[0] === "repeat_password") {
-				formattedError = {error:  "The passwords do not match.", field: ["password", "repeat_password"]}
+				formattedError = {error:  "The passwords do not match.", fields: ["password", "repeat_password"]}
 			}
 			break
 		case "string.email":
-			formattedError = {error:  "The provided email is incorrect.", field: ["email"]}
+			formattedError = {error:  "The provided email is incorrect.", fields: ["email"]}
 			break
 		case "string.pattern.base":
-			formattedError = {error:  "The provided password is not strong enough", field: ["password"]}
+			formattedError = {error:  "The provided password is not strong enough", fields: ["password"]}
 			break
 		default:
 			formattedError.error =  "Please fill all the fields."
