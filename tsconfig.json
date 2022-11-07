@@ -17,9 +17,10 @@
         "paths": {
             "~/*": ["./src/*"],
             "~~/*": ["./*"]
-        }
+        },
+        "typeRoots": ["./interfaces", "node_modules/@types"]
     },
     "ts-node": {
         "require": ["tsconfig-paths/register"]
-    }
+    },
 }
