@@ -1,9 +1,9 @@
 import {Request, Response} from "express";
 import {User} from "~/middlewares/models/user.model";
 
-export const getMe = async(req: Request, res: Response) => {
+export const getUser = async(req: Request, res: Response) => {
 	console.log(req.user)
-	const currentUser = await User.findById(req.user)
+	const currentUser = await User.findById(req.user).select('-password')
 	if(!currentUser) return res.status(404).json({type: "error", data: {error: "No user found"}})
 
 	if(req.tokens) {
@@ -11,5 +11,29 @@ export const getMe = async(req: Request, res: Response) => {
 		req.tokens = undefined
 		return res.json({type: "success", data: {user: currentUser, tokens}})
 	}
-	res.json({type: "success", data: {user: currentUser}})
+	res.status(200).json({type: "success", data: {user: currentUser}})
+}
+
+export const updateUser = async(req: Request, res: Response) => {
+	try {
+		const currentUser = await User.findByIdAndUpdate(req.user, req.body, {
+			upsert: true,
+			new: true
+		}).select('-password')
+		res.status(200).json({type: "success", data: {user: currentUser}})
+
+	} catch (err) {
+		return res.status(500).json({type: "error", data: {error: err}});
+	}
+}
+
+export const deleteUser = async(req: Request, res: Response) => {
+	try {
+		const currentUser = await User.findByIdAndDelete(req.user)
+		if(currentUser) {
+			res.status(204).json({})
+		}
+	} catch (err) {
+		return res.status(500).json({type: "error", data: {error: err}});
+	}
 }
