@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import {User} from "~/middlewares/models/user.model";
 
 export function registerValidate(data: unknown) {
 	const schema = Joi.object({
@@ -25,4 +26,8 @@ export function registerValidate(data: unknown) {
 	const result = schema.validate(data)
 	if(result.error) return {hasError: true, value: result.error.details["0"]}
 	return {hasError: false, ...result}
+}
+
+export async function isUnique(email: string) {
+	return !!(await User.findOne({email: email}))
 }
