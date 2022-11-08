@@ -1,17 +1,49 @@
 import Button from "../components/Button";
+import PageTitle from "../components/PageTitle";
+import {FormEvent, MutableRefObject, useRef} from "react";
+import {useAppContext} from "../context";
+import 'react-toastify/dist/ReactToastify.css';
+import {useForm} from "../services/hooks.service";
+import {BallTriangle} from "react-loader-spinner";
+import Toast from "../components/Toast";
 
-export default function Home() {
+export default function Signup() {
+	const {register, queryState: {isSuccess, isLoading, isQuerying, isError}} = useAppContext()
+	const formRef = useRef() as MutableRefObject<HTMLFormElement>
+	let formValues
+
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		formValues = useForm(formRef)
+		console.log(formValues)
+
+		register(formValues)
+	}
+
+	//TODO: when signed up, we should be redirected to login, Nextjs should reset the form
+	if(isSuccess) formRef.current.reset()
+
 	return (
 		<>
+			<Toast text={"Welcome Aboard"}  id={"success"}/>
 			<div className="mt-10 sm:mt-0 w-full mx-auto h-fit">
 				<div className="md:grid md:grid-cols-3 md:gap-6">
 					<div className="md:col-span-1">
 						<div className="px-4 sm:px-0">
-							<h3 className="text-lg font-medium leading-6 text-gray-900">Signup</h3>
+							<PageTitle title={"Signup"} />
+							{isQuerying && isLoading && <BallTriangle
+								height={100}
+								width={100}
+								radius={5}
+								color="#4fa94d"
+								wrapperClass={"mt-5"}
+								ariaLabel="ball-triangle-loading"
+								visible={true}
+							/>}
 						</div>
 					</div>
 					<div className="mt-5 md:col-span-2 md:mt-0">
-						<form action="#" method="POST">
+						<form action="#" method="POST" ref={formRef} onSubmit={handleSubmit}>
 							<div className="overflow-hidden shadow sm:rounded-md">
 								<div className="bg-white px-4 py-5 sm:p-6">
 									<div className="grid grid-cols-6 gap-6">
@@ -24,7 +56,7 @@ export default function Home() {
 												name="firstname"
 												id="firstname"
 												autoComplete="given-name"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className="mt-1 block w-full border-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											/>
 										</div>
 
@@ -37,7 +69,7 @@ export default function Home() {
 												name="lastname"
 												id="lastname"
 												autoComplete="family-name"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className="mt-1 block w-full border-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											/>
 										</div>
 
@@ -46,11 +78,11 @@ export default function Home() {
 												Email address
 											</label>
 											<input
-												type="text"
+												type="email"
 												name="email"
 												id="email"
 												autoComplete="email"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className={`mt-1 block w-full rounded-md shadow-sm focus:border-indigo-500 border-2 focus:ring-indigo-500 sm:text-sm ${isError && isError.fields.includes("email") ? "border-red-600" : "border-gray-300"}`}
 											/>
 										</div>
 
@@ -63,7 +95,7 @@ export default function Home() {
 												name="password"
 												id="password"
 												autoComplete="address-level2"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className={`mt-1 block w-full rounded-md shadow-sm focus:border-indigo-500 border-2 focus:ring-indigo-500 sm:text-sm ${isError && isError.fields.includes("password") ? "border-red-600" : "border-gray-300"}`}
 											/>
 										</div>
 
@@ -76,13 +108,16 @@ export default function Home() {
 												name="repeat_password"
 												id="repeat_password"
 												autoComplete="address-level1"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className={`mt-1 block w-full rounded-md shadow-sm focus:border-indigo-500 border-2 focus:ring-indigo-500 sm:text-sm ${isError && isError.fields.includes("repeat_password") ? "border-red-600" : "border-gray-300"}`}
 											/>
 										</div>
 									</div>
+									{isError && <p className="mt-3 text-red-600 font-bold">{isError.error}</p>}
 								</div>
 								<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-									<Button text={"Save"} primary={true}/>
+									<Button primary={true} shouldGrow={true}>
+										Save
+									</Button>
 								</div>
 							</div>
 						</form>

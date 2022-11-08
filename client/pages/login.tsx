@@ -1,13 +1,14 @@
 import Button from "../components/Button";
+import PageTitle from "../components/PageTitle";
 
-export default function Home() {
+export default function Login() {
 	return (
 		<>
 			<div className="mt-10 sm:mt-0 w-full mx-auto h-fit">
 				<div className="md:grid md:grid-cols-3 md:gap-6">
 					<div className="md:col-span-1">
 						<div className="px-4 sm:px-0">
-							<h3 className="text-lg font-medium leading-6 text-gray-900">Login</h3>
+							<PageTitle title={"Login"} />
 						</div>
 					</div>
 					<div className="mt-5 md:col-span-2 md:mt-0">
@@ -43,7 +44,9 @@ export default function Home() {
 									</div>
 								</div>
 								<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-									<Button text={"Save"} primary={true}/>
+									<Button primary={true} shouldGrow={true}>
+										Save
+									</Button>
 								</div>
 							</div>
 						</form>

@@ -1,4 +1,5 @@
 import Button from "../../components/Button";
+import PageTitle from "../../components/PageTitle";
 
 export default function Settings() {
 	return (
@@ -7,7 +8,7 @@ export default function Settings() {
 				<div className="md:grid md:grid-cols-3 md:gap-6">
 					<div className="md:col-span-1">
 						<div className="px-4 sm:px-0">
-							<h3 className="text-lg font-medium leading-6 text-gray-900">Modify My Infos</h3>
+							<PageTitle title={"Modify My Infos"} />
 						</div>
 					</div>
 					<div className="mt-5 md:col-span-2 md:mt-0">
@@ -43,12 +44,16 @@ export default function Settings() {
 									</div>
 								</div>
 								<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-									<Button text={"Modify"} primary={true} shouldGrow={true} />
+									<Button primary={true} shouldGrow={true}>
+										Modify
+									</Button>
 								</div>
 							</div>
 						</form>
 					</div>
-					<Button text={"Delete my Account"} primary={true}  shouldGrow={false} className="mt-5 md:mt-0" />
+					<Button primary={true}  shouldGrow={false} className="mt-5 md:mt-0">
+						Delete my Account
+					</Button>
 				</div>
 			</div>
 		</>
