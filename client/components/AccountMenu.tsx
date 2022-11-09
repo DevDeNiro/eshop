@@ -1,8 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import {useAppContext} from "../context";
+import {AccountMenuPropsType} from "../types/types";
 
-export default function AccountMenu({letter}: {letter: string}) {
+export default function AccountMenu({letter}: AccountMenuPropsType) {
 	const {setIsOpen, isOpen, logout} = useAppContext()
 
 	const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
