@@ -1,7 +1,28 @@
 import Button from "../components/Button";
 import PageTitle from "../components/PageTitle";
+import {useAppContext} from "../context";
+import {FormEvent, MutableRefObject, useEffect, useRef} from "react";
+import {useRouter} from "next/navigation";
+import {useForm} from "../services/hooks.service";
+import {BallTriangle} from "react-loader-spinner";
 
 export default function Login() {
+	const {login, queryState: {isSuccess, isQuerying, isError}} = useAppContext()
+	const formRef = useRef() as MutableRefObject<HTMLFormElement>
+	const router = useRouter()
+
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		const formValues = useForm(formRef)
+		// console.log(formValues);
+		login(formValues)
+	}
+	useEffect(() => {
+		if(isSuccess) {
+			formRef.current.reset()
+			router.push("/account")
+		}
+	}, [isSuccess])
 	return (
 		<>
 			<div className="mt-10 sm:mt-0 w-full mx-auto h-fit">
@@ -9,10 +30,19 @@ export default function Login() {
 					<div className="md:col-span-1">
 						<div className="px-4 sm:px-0">
 							<PageTitle title={"Login"} />
+							{isQuerying && <BallTriangle
+								height={100}
+								width={100}
+								radius={5}
+								color="#4fa94d"
+								wrapperClass={"mt-5 absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2 md:relative"}
+								ariaLabel="ball-triangle-loading"
+								visible={true}
+							/>}
 						</div>
 					</div>
 					<div className="mt-5 md:col-span-2 md:mt-0">
-						<form action="#" method="POST">
+						<form action="#" method="POST" ref={formRef} onSubmit={handleSubmit}>
 							<div className="overflow-hidden shadow sm:rounded-md">
 								<div className="bg-white px-4 py-5 sm:p-6">
 									<div className="grid grid-cols-6 gap-6">
@@ -21,7 +51,7 @@ export default function Login() {
 												Email address
 											</label>
 											<input
-												type="text"
+												type="email"
 												name="email"
 												id="email"
 												autoComplete="email"
@@ -42,6 +72,7 @@ export default function Login() {
 											/>
 										</div>
 									</div>
+									{isError && <p className="mt-3 text-red-600 font-bold">{isError.error}</p>}
 								</div>
 								<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
 									<Button primary={true} shouldGrow={true}>

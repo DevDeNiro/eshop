@@ -3,8 +3,8 @@ import {Types} from "mongoose";
 import {NextFunction, Request, Response} from "express";
 import {User} from "~/middlewares/models/user.model";
 
-export function genTokens({id, firstname}: {id: Types.ObjectId, firstname: string}): {accessToken: string,
-	refreshToken: string} {
+
+export function genTokens({id, firstname}: {id: Types.ObjectId, firstname: string}) {
 	const accessToken = jwt.sign({
 		id: id,
 		firstname: firstname
@@ -24,26 +24,31 @@ export function genTokens({id, firstname}: {id: Types.ObjectId, firstname: strin
 }
 
 export async function verifyTokens(req: Request, res: Response, next: NextFunction) {
-	const checkAccessToken = req.headers["access"]?.toString()?.split(' ')[1]
+	const checkAccessToken = req.headers["access"]?.toString()?.split(' ')[1] || ""
 	const checkRefreshToken = req.headers["refresh"]?.toString()?.split(' ')[1]
 
-	if(!checkAccessToken || !checkRefreshToken) return res.status(401).json({type: "error", data: {error: "Unauthorized, no token"}})
+	if(!checkRefreshToken) return res.status(401).json({type: "error", data: {error: "Unauthorized, no token"}})
 
 	try {
 		const accessData = jwt.verify(checkAccessToken, process.env.JWT_SECRET!)
-		const user = await User.findById((<any>accessData).id);
+
+		const user = await User.findById((<any>accessData).id)
 		if (!user) return res.status(401).json({type: "error", data: {error: "Something wrong"}})
 		req.user = user._id
-		console.log("yes1");
+
+		console.log("yes1")
 		next()
 	} catch (e) {
 		try {
 			const refreshData = jwt.verify(checkRefreshToken, process.env.JWT_SECRET!)
+
 			const user = await User.findById((<any>refreshData).id);
-			console.log("yes2")
 			if (!user) return res.status(401).json({type: "error", data: {error: "Something wrong"}})
-			req.tokens = genTokens({id: user.id, firstname: user.firstname})
 			req.user = user._id
+
+			req.tokens = genTokens({id: user.id, firstname: user.firstname})
+
+			console.log("yes2")
 			next()
 		} catch (e) {
 			return res.status(401).json({type: "error", data: {error: "Unauthorized, no token"}})

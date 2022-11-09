@@ -1,10 +1,13 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import {useAppContext} from "../context";
 
 export default function Layout({children}: {children: React.ReactNode}) {
-	const {setIsOpen} = useAppContext()
+	const {setIsOpen, reset} = useAppContext()
+	useEffect(() => {
+		reset()
+	}, [children])
 	return (
 		<main onClick={() => setIsOpen(false)} className="bg-gray-100 min-h-screen flex flex-col justify-start items-center gap-14">
 			<Header />

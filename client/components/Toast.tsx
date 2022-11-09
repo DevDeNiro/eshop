@@ -5,7 +5,8 @@ import {ToastPropsType} from "../types/types";
 export default function Toast({text, id}: ToastPropsType) {
 	const {queryState: {isSuccess}} = useAppContext()
 	const notify = () => toast.success(text, {
-		toastId: id
+		toastId: id,
+		autoClose: 3000
 	})
 	if(!toast.isActive(id)) notify()
 

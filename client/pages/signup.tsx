@@ -1,42 +1,48 @@
 import Button from "../components/Button";
 import PageTitle from "../components/PageTitle";
-import {FormEvent, MutableRefObject, useRef} from "react";
+import {FormEvent, MutableRefObject, useEffect, useRef} from "react";
 import {useAppContext} from "../context";
 import 'react-toastify/dist/ReactToastify.css';
 import {useForm} from "../services/hooks.service";
 import {BallTriangle} from "react-loader-spinner";
 import Toast from "../components/Toast";
+import {useRouter} from "next/navigation";
 
 export default function Signup() {
-	const {register, queryState: {isSuccess, isLoading, isQuerying, isError}} = useAppContext()
+	const {register, queryState: {isSuccess, isQuerying, isError}} = useAppContext()
 	const formRef = useRef() as MutableRefObject<HTMLFormElement>
-	let formValues
+	const router = useRouter()
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		formValues = useForm(formRef)
-		console.log(formValues)
-
+		const formValues = useForm(formRef)
 		register(formValues)
 	}
-
-	//TODO: when signed up, we should be redirected to login, Nextjs should reset the form
-	if(isSuccess) formRef.current.reset()
+	useEffect(() => {
+		let timeToRedirect: NodeJS.Timeout
+		if(isSuccess) {
+			formRef.current.reset()
+			timeToRedirect = setTimeout(() => {
+				router.push("/login")
+			}, 3000)
+		}
+		return () => clearTimeout(timeToRedirect)
+	}, [isSuccess])
 
 	return (
 		<>
-			<Toast text={"Welcome Aboard"}  id={"success"}/>
+			<Toast text={"You're signed up ! You will be redirected"}  id={"success"}/>
 			<div className="mt-10 sm:mt-0 w-full mx-auto h-fit">
 				<div className="md:grid md:grid-cols-3 md:gap-6">
 					<div className="md:col-span-1">
 						<div className="px-4 sm:px-0">
 							<PageTitle title={"Signup"} />
-							{isQuerying && isLoading && <BallTriangle
+							{isQuerying && <BallTriangle
 								height={100}
 								width={100}
 								radius={5}
 								color="#4fa94d"
-								wrapperClass={"mt-5"}
+								wrapperClass={"mt-5 absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2 md:relative"}
 								ariaLabel="ball-triangle-loading"
 								visible={true}
 							/>}

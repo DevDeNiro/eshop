@@ -5,6 +5,12 @@ import bcrypt from "bcrypt"
 import {User} from "~/middlewares/models/user.model";
 import {genTokens} from "~/services/jwt.services";
 
+/**
+ * @description register user using provided credentials
+ * @param req
+ * @param res
+ * @access Public
+ */
 export const register = async(req: Request, res: Response) => {
 	const {hasError, value} = registerValidate(req.body)
 
@@ -29,6 +35,12 @@ export const register = async(req: Request, res: Response) => {
 	}
 }
 
+/**
+ * @description logs in user if provided credentials are valid
+ * @param req
+ * @param res
+ * @access Public
+ */
 export const login = async(req: Request, res: Response) => {
 	const {hasError, value} = loginValidate(req.body)
 
@@ -44,5 +56,18 @@ export const login = async(req: Request, res: Response) => {
 	const { password, ...data } = foundUser.toJSON()
 
 	const tokens = genTokens({id: foundUser._id, firstname: foundUser.firstname})
+	req.user = foundUser._id
 	res.status(200).json({type: "success", data: {user: data, tokens}})
+}
+
+/**
+ * @description logout user
+ * @param req
+ * @param res
+ * @access Public
+ */
+export const logout = async(req: Request, res: Response) => {
+	req.user = undefined
+	console.log("Logged out");
+	res.status(204).json({})
 }

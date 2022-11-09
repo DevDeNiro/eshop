@@ -1,55 +1,138 @@
-import React, {createContext, useContext, useMemo, useState} from "react";
-import {registerService} from "../services/auth.services";
+import React, {createContext, useContext, useEffect, useMemo, useState} from "react";
+import {loginService, logoutService, registerService} from "../services/auth.services";
+import {getUserService} from "../services/user.service";
 
 interface AppContextInterface {
 	isOpen: boolean|null,
 	setIsOpen: Function,
 	register: Function,
+	login: Function,
 	queryState: {
 		isQuerying: boolean,
 		isSuccess: boolean,
-		isLoading: boolean,
-		isError: any
-	}
+		isError: any|null
+	},
+	reset: Function,
+	getUser: Function,
+	user: any,
+	isAuthorized: boolean,
+	logout: Function
 }
 
 const AppContext = createContext<AppContextInterface|null>(null)
 
 const AppProvider = ({children}: {children: React.ReactNode}) => {
+	/******************** STATES ********************/
 	const [isOpen, setIsOpen] = useState<boolean|null>(null)
 	const [queryState, setQueryState] = useState({
 		isQuerying: false,
 		isSuccess: false,
-		isLoading: false,
 		isError: null
 	})
+	const [user, setUser] = useState(null)
+	const [accessToken, setAccessToken] = useState<string>("")
+	const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
 
-	const register = (data: any) => {
+	useEffect(() => {
+		getUser()
+	}, [])
+
+	useEffect(() => {
+		setIsAuthorized(!!accessToken)
+	}, [accessToken])
+
+	/******************** FUNCTIONS ********************/
+	const reset = () => setQueryState(({
+		isQuerying: false,
+		isSuccess: false,
+		isError: null
+	}))
+
+	const getUser = () => {
 		const controller = new AbortController()
-		setQueryState(({
-			isQuerying: false,
-			isSuccess: false,
-			isLoading: false,
-			isError: null
-		}))
-		registerService(data, controller.signal)
-			.then(res => res.type === "success" ? setQueryState(curr => ({...curr, isSuccess: true, isError: null})) : setQueryState(curr => ({...curr, isSuccess: false, isError: res.data})))
-			.finally(() => setQueryState(curr => ({...curr,
+		reset()
+		getUserService({
+			accessToken: accessToken,
+			refreshToken: localStorage.getItem("refreshToken") || ""
+		}, controller.signal)
+			.then(res => {
+				if(res.type === "success") {
+					setQueryState(curr => ({...curr, isSuccess: true, isError: null}))
+					setUser(res.data.user)
+					if(res.data.tokens) {
+						setAccessToken(res.data.tokens.accessToken)
+						localStorage.setItem("refreshToken", res.data.tokens.refreshToken)
+					}
+				} else
+					setQueryState(curr => ({...curr, isSuccess: false, isError: res.data}))
+			})			.finally(() => setQueryState(curr => ({...curr,
 				isQuerying: false,
-				isLoading: false
 			})))
 
 		return () => controller.abort()
 	}
 
+	const register = (data: any) => {
+		const controller = new AbortController()
+		reset()
+		registerService(data, controller.signal)
+			.then(res => res.type === "success" ? setQueryState(curr => ({...curr, isSuccess: true, isError: null})) : setQueryState(curr => ({...curr, isSuccess: false, isError: res.data})))
+			.finally(() => setQueryState(curr => ({...curr,
+				isQuerying: false,
+			})))
+
+		return () => controller.abort()
+	}
+
+	const login = (data: any) => {
+		const controller = new AbortController()
+		reset()
+		loginService(data, controller.signal)
+			.then(res => {
+				if(res.type === "success") {
+					setQueryState(curr => ({...curr, isSuccess: true, isError: null}))
+					setAccessToken(res.data.tokens.accessToken)
+					setUser(res.data.user)
+					localStorage.setItem("refreshToken", res.data.tokens.refreshToken)
+				} else
+					setQueryState(curr => ({...curr, isSuccess: false, isError: res.data}))
+			})
+			.finally(() => setQueryState(curr => ({...curr,
+				isQuerying: false,
+			})))
+
+		return () => controller.abort()
+	}
+
+	const logout = () => {
+		const controller = new AbortController()
+		reset()
+		logoutService(controller.signal)
+			.then(() => {
+				setQueryState(curr => ({...curr, isSuccess: true, isError: null}))
+				setAccessToken("")
+				setUser(null)
+				localStorage.removeItem("refreshToken")
+			})
+			.finally(() => setQueryState(curr => ({...curr,
+				isQuerying: false,
+			})))
+	}
+	/******************** VALUE ********************/
 	const value = useMemo(() => {
 		return {
 			isOpen,
 			setIsOpen,
 			register,
-			queryState
+			queryState,
+			reset,
+			login,
+			user,
+			isAuthorized,
+			getUser,
+			logout
 		}
-	}, [isOpen, setIsOpen, register, queryState])
+	}, [isOpen, setIsOpen, register, queryState, setQueryState, login, user, isAuthorized, getUser])
 	return <AppContext.Provider value={value}>
 		{children}
 	</AppContext.Provider>
