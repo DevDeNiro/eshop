@@ -16,7 +16,14 @@ export default function Navbar() {
 						Login
 					</Link>
 				</>
-			): <AccountMenu letter={user.firstname[0]} />}
+			): (
+				<>
+					<Link href={"/catalogue"} className="transition py-2 px-4 rounded hover:bg-indigo-200">
+						Catalogue
+					</Link>
+					<AccountMenu letter={user.firstname[0]} />
+				</>
+			)}
 
 		</nav>
 	)

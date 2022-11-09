@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useEffect, useMemo, useState} from "react";
 import {loginService, logoutService, registerService} from "../services/auth.services";
 import {getUserService} from "../services/user.service";
+import {getProductsService} from "../services/products.service";
 
 interface AppContextInterface {
 	isOpen: boolean|null,
@@ -16,7 +17,9 @@ interface AppContextInterface {
 	getUser: Function,
 	user: any,
 	isAuthorized: boolean,
-	logout: Function
+	logout: Function,
+	getProducts: Function,
+	products: any
 }
 
 const AppContext = createContext<AppContextInterface|null>(null)
@@ -32,9 +35,11 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 		isError: null
 	})
 	const [user, setUser] = useState(null)
+	const [products, setProducts] = useState(null)
 	const [accessToken, setAccessToken] = useState<string>("")
 	const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
 
+	/******************** EFFECTS ********************/
 	useEffect(() => {
 		refreshToken = localStorage.getItem("refreshToken") || ""
 		if(refreshToken) {
@@ -52,6 +57,19 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 		isSuccess: false,
 		isError: null
 	}))
+
+	const getProducts = () => {
+		reset()
+		setQueryState(curr => ({...curr,
+			isQuerying: true
+		}))
+		getProductsService()
+			.then(setProducts)
+			.catch((err) => console.log(err))
+			.finally(() => setQueryState(curr => ({...curr,
+				isQuerying: false,
+			})))
+	}
 
 	const getUser = () => {
 		reset()
@@ -81,7 +99,6 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	}
 
 	const register = (data: any) => {
-		const controller = new AbortController()
 		reset()
 		setQueryState(curr => ({...curr,
 			isQuerying: true
@@ -96,7 +113,6 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	}
 
 	const login = (data: any) => {
-		const controller = new AbortController()
 		reset()
 		setQueryState(curr => ({...curr,
 			isQuerying: true
@@ -119,7 +135,6 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	}
 
 	const logout = () => {
-		const controller = new AbortController()
 		reset()
 		setQueryState(curr => ({...curr,
 			isQuerying: true
@@ -147,9 +162,13 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 			user,
 			isAuthorized,
 			getUser,
-			logout
+			logout,
+			getProducts,
+			products
 		}
-	}, [isOpen, setIsOpen, register, queryState, setQueryState, login, user, isAuthorized, getUser])
+	}, [isOpen, setIsOpen, register, queryState, setQueryState, login, user, isAuthorized, getUser, getProducts, products])
+
+	/******************** RETURN ********************/
 	return <AppContext.Provider value={value}>
 		{children}
 	</AppContext.Provider>
