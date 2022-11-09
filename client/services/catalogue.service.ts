@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export function getProductsService() {
+export function getCatalogueService() {
 	return axios.get(
 		process.env.RAPID_API_URL!, {
 			params: {
