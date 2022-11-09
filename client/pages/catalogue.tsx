@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {BallTriangle} from "react-loader-spinner";
 
 export default function Catalogue() {
-	const {isAuthorized, getProducts, products: {products}, queryState: {isQuerying}} = useAppContext()
+	const {isAuthorized, getProducts, catalogue, queryState: {isQuerying}} = useAppContext()
 	const router = useRouter()
 	const [calledPush, setCalledPush] = useState<boolean>(false)
 
@@ -17,7 +17,7 @@ export default function Catalogue() {
 
 	useEffect(() => {
 		getProducts()
-		console.log(products);
+		console.log(catalogue);
 	}, [])
 
 	return (
