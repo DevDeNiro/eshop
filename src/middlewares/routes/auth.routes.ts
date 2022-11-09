@@ -1,9 +1,10 @@
 import {Router} from "express";
-import {login, register} from "~/middlewares/controllers/auth.controllers";
+import {login, logout, register} from "~/middlewares/controllers/auth.controllers";
 
 const authRoutes = Router()
 
 authRoutes.post("/register", register)
 authRoutes.post("/login", login)
+authRoutes.post("/logout", logout)
 
 export default authRoutes

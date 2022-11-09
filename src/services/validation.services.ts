@@ -1,6 +1,10 @@
 import Joi from 'joi'
 import {User} from "~/middlewares/models/user.model";
 
+/**
+ * @description uses Joi library to validate credentials from register form
+ * @param data
+ */
 export function registerValidate(data: unknown) {
 	const schema = Joi.object({
 		firstname: Joi.string()
@@ -28,6 +32,10 @@ export function registerValidate(data: unknown) {
 	return {hasError: false, ...result}
 }
 
+/**
+ * @description uses Joi library to validate credentials from login form
+ * @param data
+ */
 export function loginValidate(data: unknown) {
 	const schema = Joi.object({
 		email: Joi.string()
@@ -41,6 +49,7 @@ export function loginValidate(data: unknown) {
 	if(result.error) return {hasError: true, value: result.error.details["0"]}
 	return {hasError: false, ...result}
 }
+
 
 export async function isUnique(email: string) {
 	return (await User.findOne({email: email}))
