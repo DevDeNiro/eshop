@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useEffect, useMemo, useState} from "react";
 import {loginService, logoutService, registerService} from "../services/auth.services";
 import {getUserService} from "../services/user.service";
-import {getProductsService} from "../services/products.service";
+import {getCatalogueService} from "../services/catalogue.service";
 
 interface AppContextInterface {
 	isOpen: boolean|null,
@@ -19,7 +19,7 @@ interface AppContextInterface {
 	isAuthorized: boolean,
 	logout: Function,
 	getProducts: Function,
-	products: any
+	catalogue: any
 }
 
 const AppContext = createContext<AppContextInterface|null>(null)
@@ -35,7 +35,7 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 		isError: null
 	})
 	const [user, setUser] = useState(null)
-	const [products, setProducts] = useState(null)
+	const [catalogue, setCatalogue] = useState(null)
 	const [accessToken, setAccessToken] = useState<string>("")
 	const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
 
@@ -63,8 +63,8 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 		setQueryState(curr => ({...curr,
 			isQuerying: true
 		}))
-		getProductsService()
-			.then(setProducts)
+		getCatalogueService()
+			.then(setCatalogue)
 			.catch((err) => console.log(err))
 			.finally(() => setQueryState(curr => ({...curr,
 				isQuerying: false,
@@ -164,9 +164,9 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 			getUser,
 			logout,
 			getProducts,
-			products
+			catalogue
 		}
-	}, [isOpen, setIsOpen, register, queryState, setQueryState, login, user, isAuthorized, getUser, getProducts, products])
+	}, [isOpen, setIsOpen, register, queryState, setQueryState, login, user, isAuthorized, getUser, getProducts, catalogue])
 
 	/******************** RETURN ********************/
 	return <AppContext.Provider value={value}>
