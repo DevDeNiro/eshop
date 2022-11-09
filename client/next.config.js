@@ -1,4 +1,4 @@
-const {RAPID_API_KEY,RAPID_API_HOST,RAPID_API_URL} = require('./env')
+const {RAPID_API_KEY, RAPID_API_HOST, RAPID_API_URL} = require('./env')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
