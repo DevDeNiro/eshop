@@ -2,8 +2,9 @@ import React, {useEffect} from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import {useAppContext} from "../context";
+import {LayoutPropsType} from "../types/types";
 
-export default function Layout({children}: {children: React.ReactNode}) {
+export default function Layout({children}: LayoutPropsType) {
 	const {setIsOpen, reset} = useAppContext()
 	useEffect(() => {
 		reset()

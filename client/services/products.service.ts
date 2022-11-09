@@ -2,7 +2,7 @@ import axios from "axios";
 
 export function getProductsService() {
 	return axios.get(
-		'https://asos2.p.rapidapi.com/products/v2/list', {
+		process.env.RAPID_API_URL!, {
 			params: {
 				limit: '48',
 				categoryId: '4209',
@@ -15,11 +15,15 @@ export function getProductsService() {
 				country: 'US',
 			},
 			headers: {
-				'X-RapidAPI-Key': 'd0d3471d3emsh609102a98bc5935p166061jsn914205307d89',
-				'X-RapidAPI-Host': 'asos2.p.rapidapi.com'
+				'X-RapidAPI-Key': process.env.RAPID_API_KEY,
+				'X-RapidAPI-Host': process.env.RAPID_API_HOST
 			}
 		}
 	)
 		.then(res => res.data)
+		.catch((err) => err)
+
+
+	// return new Promise(() => console.log(process.env.RAPID_API_KEY, process.env.RAPID_API_HOST,process.env.RAPID_API_URL))
 
 }
