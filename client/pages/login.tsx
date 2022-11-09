@@ -28,14 +28,14 @@ export default function Login() {
 			<div className="mt-10 sm:mt-0 w-full mx-auto h-fit">
 				<div className="md:grid md:grid-cols-3 md:gap-6">
 					<div className="md:col-span-1">
-						<div className="px-4 sm:px-0">
+						<div className="px-4 sm:px-0 relative">
 							<PageTitle title={"Login"} />
 							{isQuerying && <BallTriangle
 								height={100}
 								width={100}
 								radius={5}
-								color="#4fa94d"
-								wrapperClass={"mt-5 absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2 md:relative"}
+								color="#4E45E3"
+								wrapperClass={"md:mt-5 absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 md:relative md-transform-none"}
 								ariaLabel="ball-triangle-loading"
 								visible={true}
 							/>}
@@ -55,7 +55,7 @@ export default function Login() {
 												name="email"
 												id="email"
 												autoComplete="email"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className="mt-1 border-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											/>
 										</div>
 
@@ -68,7 +68,7 @@ export default function Login() {
 												name="password"
 												id="password"
 												autoComplete="password"
-												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												className="mt-1 border-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											/>
 										</div>
 									</div>
@@ -76,7 +76,7 @@ export default function Login() {
 								</div>
 								<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
 									<Button primary={true} shouldGrow={true}>
-										Save
+										Login
 									</Button>
 								</div>
 							</div>

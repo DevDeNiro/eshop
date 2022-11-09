@@ -1,7 +1,21 @@
 import Button from "../../components/Button";
 import PageTitle from "../../components/PageTitle";
+import {useAppContext} from "../../context";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
 
 export default function Settings() {
+	const {user, isAuthorized} = useAppContext()
+	const router = useRouter()
+	const [calledPush, setCalledPush] = useState<boolean>(false)
+
+	useEffect(() => {
+		// checks if the user is authenticated
+		if(!isAuthorized) setCalledPush(true)
+		calledPush && router.push("/login")
+
+	}, [])
+
 	return (
 		<>
 			<div className="mt-10 sm:mt-0 w-full mx-auto h-fit">
@@ -26,6 +40,7 @@ export default function Settings() {
 												id="email"
 												autoComplete="email"
 												className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+												defaultValue={user?.email}
 											/>
 										</div>
 

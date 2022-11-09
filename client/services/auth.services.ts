@@ -20,10 +20,7 @@ export function logoutService(signal: AbortSignal) {
 	return axios.post("/api/auth/logout", {}, {
 		signal
 	})
-		.then(res => {
-			console.log(res.data);
-			return res.status === 204 && res.data
-		})
+		.then(res => res.status === 204 && res.data)
 		.catch((err) => err.response.data)
 }
 

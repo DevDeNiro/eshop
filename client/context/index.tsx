@@ -22,6 +22,8 @@ interface AppContextInterface {
 const AppContext = createContext<AppContextInterface|null>(null)
 
 const AppProvider = ({children}: {children: React.ReactNode}) => {
+	const controller = new AbortController()
+	let refreshToken = ""
 	/******************** STATES ********************/
 	const [isOpen, setIsOpen] = useState<boolean|null>(null)
 	const [queryState, setQueryState] = useState({
@@ -34,7 +36,10 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
 
 	useEffect(() => {
-		getUser()
+		refreshToken = localStorage.getItem("refreshToken") || ""
+		if(refreshToken) {
+			getUser()
+		}
 	}, [])
 
 	useEffect(() => {
@@ -49,11 +54,13 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	}))
 
 	const getUser = () => {
-		const controller = new AbortController()
 		reset()
+		setQueryState(curr => ({...curr,
+			isQuerying: true
+		}))
 		getUserService({
-			accessToken: accessToken,
-			refreshToken: localStorage.getItem("refreshToken") || ""
+			accessToken,
+			refreshToken
 		}, controller.signal)
 			.then(res => {
 				if(res.type === "success") {
@@ -65,7 +72,8 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 					}
 				} else
 					setQueryState(curr => ({...curr, isSuccess: false, isError: res.data}))
-			})			.finally(() => setQueryState(curr => ({...curr,
+			})
+			.finally(() => setQueryState(curr => ({...curr,
 				isQuerying: false,
 			})))
 
@@ -75,6 +83,9 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	const register = (data: any) => {
 		const controller = new AbortController()
 		reset()
+		setQueryState(curr => ({...curr,
+			isQuerying: true
+		}))
 		registerService(data, controller.signal)
 			.then(res => res.type === "success" ? setQueryState(curr => ({...curr, isSuccess: true, isError: null})) : setQueryState(curr => ({...curr, isSuccess: false, isError: res.data})))
 			.finally(() => setQueryState(curr => ({...curr,
@@ -87,6 +98,9 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	const login = (data: any) => {
 		const controller = new AbortController()
 		reset()
+		setQueryState(curr => ({...curr,
+			isQuerying: true
+		}))
 		loginService(data, controller.signal)
 			.then(res => {
 				if(res.type === "success") {
@@ -107,6 +121,9 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 	const logout = () => {
 		const controller = new AbortController()
 		reset()
+		setQueryState(curr => ({...curr,
+			isQuerying: true
+		}))
 		logoutService(controller.signal)
 			.then(() => {
 				setQueryState(curr => ({...curr, isSuccess: true, isError: null}))
